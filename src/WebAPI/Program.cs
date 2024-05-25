@@ -12,7 +12,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<LoggingDbContext>(o =>
 {
-    o.UseSqlServer("Server=localhost,1433;User Id=sa;Password=yourStrong(!)Password;TrustServerCertificate=True;");
+    o.UseSqlServer("Server=localhost,1433;User Id=sa;Database=master;Password=yourStrong(!)Password;TrustServerCertificate=True;");
 },
     contextLifetime: ServiceLifetime.Transient,
     optionsLifetime: ServiceLifetime.Singleton);
@@ -20,6 +20,8 @@ builder.Services.AddDbContext<LoggingDbContext>(o =>
 builder.Services.AddLogging();
 
 var app = builder.Build();
+
+await app.Services.GetRequiredService<LoggingDbContext>().Database.MigrateAsync();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
